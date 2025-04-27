@@ -1,0 +1,14 @@
+import * as React from 'react';
+import { Container } from '@mui/material';
+
+export const ActionBar = ({ children }: { children: Array<React.ReactNode> }) => {
+  return (
+    <Container sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    }}>
+      {children.map(child => child)}
+    </Container>
+  );
+};

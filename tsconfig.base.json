@@ -16,6 +16,10 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["development"]
+    "customConditions": ["development"],
+    "paths": {
+      "@my-monorepo/shared": ["libs/shared/src/index.ts"],
+      "@my-monorepo/ui-kit": ["libs/ui-kit/src/index.ts"]
+    }
   }
 }
