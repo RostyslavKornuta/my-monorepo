@@ -62,7 +62,8 @@ export const Header = ({ navigationItems, logo }: {
           position: 'absolute',
           top: 0,
           right: 0,
-          objectFit: 'contain'
+          objectFit: 'contain',
+          pointerEvents: 'none'
         }} />
     </Container>
   );

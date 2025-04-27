@@ -2,42 +2,43 @@ import { Button, Container } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useGetContentsQuery } from '../../services/contentApi';
 import { useGetAuthorsQuery } from '../../services/authorApi';
-import { ActionBar, ContentBar, ContentHeader, CustomSearch, CustomTable } from '@my-monorepo/ui-kit';
-import { config, mediumLevel, topLevel } from '../../configs/content-configs';
+import { ActionBar, ContentHeader, CustomSearch, CustomTable, Filters, Test } from '@my-monorepo/ui-kit';
+import { config, filters } from '../../configs/content-configs';
 import { useGetCategoriesQuery } from '../../services/categoryApi';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import AddIcon from '@mui/icons-material/Add';
 
 export const Sites = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: contents, isLoading: contentsLoading, error: contentsError } = useGetContentsQuery();
+  const [selectedFilters, setSelectedFilters] = useState<Array<Test>>(filters.map(filter => ({
+    code: filter.title.toLowerCase(),
+    values: []
+  })));
+  const { data: contents = [], isLoading: contentsLoading, error: contentsError } = useGetContentsQuery();
   const { data: authors } = useGetAuthorsQuery();
   const { data: categories } = useGetCategoriesQuery();
 
-  const mappedArticles = useMemo(() => contents?.map(content => {
-    const author = authors?.find(it => it.id === content.article.author).name;
+  const mappedArticles = useMemo(() => contents.map(content => {
+    const author = authors?.find(it => it.id === content.article.author)?.name;
 
     return Object.assign({
       id: content.article.id,
       path: content.article.path,
       title: content.article.title,
       favoriteImage: content.article.favoriteImage,
-      slides: content.details.elements,
+      slides: content.details.slides,
       status: content.article.status,
       trending: content.article.trending,
       type: content.article.type,
       author,
-      category: content.article.category,
+      category: content.article.category || '',
       date: content.article.modifiedAt
     });
   }), [contents]);
 
   useEffect(() => {
-    return () => {
-      console.log(searchQuery);
-    };
-  }, [searchQuery]);
+    console.log(selectedFilters);
+  }, [selectedFilters]);
 
   return (
     <>
@@ -53,14 +54,14 @@ export const Sites = () => {
           gap: '16px'
         }}>
           <CustomSearch value={searchQuery} onChange={setSearchQuery} />
-          <Button variant="contained" color="secondary"
-                  startIcon={<FilterListIcon sx={{ color: '#8E93A8', height: 24, width: 24 }} />}>Filters</Button>
+          <Filters config={filters} selectedFilters1={selectedFilters} onChange={setSelectedFilters} />
         </Container>
         <Button variant="contained" color="primary"
                 startIcon={<AddIcon sx={{ color: '#FFFFFF', height: 20, width: 20 }} />}>Add content</Button>
       </ActionBar>
-      <CustomTable config={config({ categories })} isLoading={contentsLoading} error={contentsError}
-                   loaderIcon="/public/loader.svg" data={mappedArticles} />
+      <CustomTable config={config({ categories })} data={mappedArticles} isLoading={contentsLoading}
+                   error={contentsError}
+                   loaderIcon="/public/loader.svg" searchQuery={searchQuery} />
     </>
   );
 };

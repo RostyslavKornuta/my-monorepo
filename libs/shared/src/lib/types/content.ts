@@ -21,7 +21,7 @@ export interface Article {
 }
 
 export interface Details {
-  elements: Array<Slide>;
+  slides: Array<Slide>;
   type: ContentType;
 }
 

@@ -1,9 +1,16 @@
 import { Box, Container, MenuItem, Select, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
-import { CustomImage, TableConfig } from '@my-monorepo/ui-kit';
+import { CustomImage, Filter, TableConfig } from '@my-monorepo/ui-kit';
 import { Category, formatTimestamp } from '@my-monorepo/shared';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+
+export const filters: Array<Filter> = [
+  {title: 'Tags', type: 'TAG', options: ['black', 'red']},
+  {title: 'Status', type: 'STATUS', options: ['Active', 'Draft', 'Pending']},
+  {title: 'Number', type: 'NUMBER', options: []},
+  {title: 'String', type: 'STRING', options: []},
+]
 
 export const config = (additional?: any): TableConfig<any> => {
   return {
@@ -105,7 +112,7 @@ export const config = (additional?: any): TableConfig<any> => {
         label: 'Category',
         key: 'category',
         render: (value) => <Select value={value}>
-          {additional.categories.map((category: Category) => <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>)}
+          {additional.categories?.map((category: Category) => <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>)}
         </Select>
       },
       {
