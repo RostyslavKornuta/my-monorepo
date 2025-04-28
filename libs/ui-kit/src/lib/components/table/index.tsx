@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { CustomImage } from '../image';
+import { Image } from '../image';
 import { useEffect, useState } from 'react';
 
 export interface TableColumn<T> {
@@ -9,31 +9,23 @@ export interface TableColumn<T> {
 }
 
 export interface TableConfig<T> {
-  columns: Array<TableColumn<T>>;
+  columns: TableColumn<T>[];
 }
 
-export const CustomTable = <T, >({ config, data, isLoading, loaderIcon, error, searchQuery }: {
+export const CustomTable = <T, >({ config, data, isLoading, loaderIcon, error }: {
   config: TableConfig<T>,
-  data: Array<T>,
+  data: T[],
   isLoading: boolean,
   loaderIcon: string,
   error: any,
-  searchQuery?: string,
 }) => {
-  const [tableData, setTableData] = useState(data);
-
-  useEffect(() => {
-    const filteredData = data.filter(it => it.name?.toLowerCase().includes(searchQuery.toLowerCase()) || it.title?.toLowerCase().includes(searchQuery.toLowerCase()));
-    setTableData(filteredData);
-  }, [searchQuery, data]);
-
   return (
     <>
-      {isLoading && <CustomImage width="115px" height="32px" path={loaderIcon} />}
+      {isLoading && <Image width="115px" height="32px" path={loaderIcon} />}
       {!isLoading && error && <Typography>Oops, something went wrong :(</Typography>}
       {!isLoading && !error && (
         <>
-          {tableData.length === 0 ? (
+          {data.length === 0 ? (
             <Typography>No results found</Typography>
           ) : (
             <TableContainer>
@@ -49,7 +41,7 @@ export const CustomTable = <T, >({ config, data, isLoading, loaderIcon, error, s
                 </TableHead>
 
                 <TableBody>
-                  {tableData.map((entity: T, rowIndex: number) => (
+                  {data.map((entity: T, rowIndex: number) => (
                     <TableRow key={rowIndex} role={'row'}>
                       {config.columns.map((column: TableColumn<T>, rowIndex: number) => (
                         <TableCell key={rowIndex} size="small" role={'row'}>

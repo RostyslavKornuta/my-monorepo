@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const navigationItems: Array<NavItem> = [
+const navigationItems: NavItem[] = [
   {
     title: 'Sites',
     path: '/sites'

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Container } from '@mui/material';
 
-export const ActionBar = ({ children }: { children: Array<React.ReactNode> }) => {
+export const ActionBar = ({ children }: { children: React.ReactNode[] }) => {
   return (
     <Container sx={{
       display: 'flex',

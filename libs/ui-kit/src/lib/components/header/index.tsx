@@ -7,7 +7,7 @@ export interface NavItem {
 }
 
 export const Header = ({ navigationItems, logo }: {
-  navigationItems: Array<NavItem>,
+  navigationItems: NavItem[],
   logo: string
 }) => {
   return (

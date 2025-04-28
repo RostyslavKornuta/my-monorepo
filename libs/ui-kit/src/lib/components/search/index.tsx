@@ -4,7 +4,7 @@ import { TextField } from '@mui/material';
 import { useDebounce } from '@my-monorepo/shared';
 import { useEffect, useState } from 'react';
 
-export const CustomSearch = ({ value, onChange, debounceDelay = 500, width = '400px' }: {
+export const Search = ({ value, onChange, debounceDelay = 500, width = '400px' }: {
   value: string;
   onChange: (newValue: string) => void;
   debounceDelay?: number;
@@ -27,7 +27,7 @@ export const CustomSearch = ({ value, onChange, debounceDelay = 500, width = '40
       value={inputValue}
       onChange={handleInput}
       InputProps={{
-        sx: {width: width},
+        sx: { width },
         startAdornment: (
           <InputAdornment position="start">
             <SearchIcon sx={{ color: '#8E93A8', height: 20, width: 20 }} />

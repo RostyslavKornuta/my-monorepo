@@ -1,28 +1,45 @@
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { Box, Button, Checkbox, Container, MenuItem, Select, TextField, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Box, Button, Checkbox, Container, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
-export type FilterType = 'STATUS' | 'TAG' | 'NUMBER' | 'STRING'
+export type FilterType = 'CHECKBOX' | 'COLOR' | 'STRING'
+
+export type FilterValue = string | Array<any>
 
 export interface Filter {
   title: string;
-  type: FilterType;
-  options: Array<string | number>;
-}
-
-export interface Test {
   code: string;
-  values: Array<string>;
+  type: FilterType;
+  options: FilterOption[];
 }
 
-export const Filters = ({ config = [], selectedFilters1, onChange }: {
-  config: Array<Filter>,
-  selectedFilters1: Array<Test>,
-  onChange: (filters: any) => void
+export interface FilterOption {
+  title: string;
+  value: string;
+}
+
+export const toFilterOption = (title: string, value: string): FilterOption => ({ title, value });
+
+export interface FilterResult {
+  code: string;
+  type: FilterType;
+  value: FilterValue;
+}
+
+export const Filters = ({ config = [], filterResults, onChange }: {
+  config: Filter[],
+  filterResults: FilterResult[],
+  onChange: (filterResults: FilterResult[]) => void
 }) => {
   const [isOpened, setIsOpened] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState<Array<Test>>(selectedFilters1);
+  const [selectedFilters, setSelectedFilters] = useState<FilterResult[]>(filterResults);
+
+  const onClearAll = () => {
+    onChange([])
+    setSelectedFilters([])
+    setIsOpened(false);
+  }
 
   const onCancel = () => {
     setIsOpened(false);
@@ -33,27 +50,45 @@ export const Filters = ({ config = [], selectedFilters1, onChange }: {
     setIsOpened(false);
   };
 
-  const handleSelectedItem = (updatedFilter: Test) => {
+  const isEmptyValue = (value: FilterValue): boolean => {
+    if (value === null || value === undefined) return true;
+    if (Array.isArray(value)) return value.length === 0;
+    if (typeof value === 'string') return value.trim() === '';
+    if (typeof value === 'object') return Object.keys(value).length === 0;
+
+    return false;
+  };
+
+  const handleSelectedItem = (filterResult: FilterResult) => {
     setSelectedFilters(prevFilters => {
-      const index = prevFilters.findIndex(item => item.code === updatedFilter.code);
+      const index = prevFilters.findIndex(item => item.code === filterResult.code);
+
+      if (isEmptyValue(filterResult.value)) {
+        return prevFilters.filter(item => item.code !== filterResult.code);
+      }
+
       if (index !== -1) {
         const updated = [...prevFilters];
-        updated[index] = updatedFilter;
+        updated[index] = filterResult;
         return updated;
-      } else {
-        return [...prevFilters, updatedFilter];
       }
+
+      return [...prevFilters, filterResult];
     });
   };
 
   return (
     <Container sx={{
-      position: 'relative'
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
     }}>
       <Button variant="contained" color="secondary"
               startIcon={<FilterListIcon sx={{ color: '#8E93A8', height: 24, width: 24 }} />}
               onClick={() => setIsOpened(!isOpened)}>Filters</Button>
-
+      {filterResults.length > 0 && <Button variant="text" color="primary"
+                                         onClick={() => onClearAll()}>Clear All</Button>}
       {isOpened && <Container sx={{
         width: '400px',
         maxHeight: '485px',
@@ -83,15 +118,15 @@ export const Filters = ({ config = [], selectedFilters1, onChange }: {
           overflowY: 'auto'
         }}>
           {config.map(filter => {
-            const selectedFilter = selectedFilters.find(f => f.code === filter.title.toLowerCase());
-            const selectedValues = selectedFilter ? selectedFilter.values : [];
+            const filterResult = selectedFilters.find(it => it.code === filter.code.toLowerCase());
+            const filterResultValues = filterResult ? filterResult.value : undefined;
 
             return (
               <FilterItem
                 key={filter.title}
                 filter={filter}
                 onSelect={handleSelectedItem}
-                selectedValues={selectedValues}
+                selectedValue={filterResultValues}
               />
             );
           })}
@@ -110,7 +145,7 @@ export const Filters = ({ config = [], selectedFilters1, onChange }: {
           }}>
             Selected items:
             <Typography component="span" sx={{ fontWeight: 500 }}>
-              {selectedFilters.filter(filter => filter.values.length > 0).length}
+              {selectedFilters.length}
             </Typography>
           </Typography>
           <Box sx={{
@@ -129,41 +164,35 @@ export const Filters = ({ config = [], selectedFilters1, onChange }: {
   );
 };
 
-const FilterItem = ({ filter, onSelect, selectedValues }: {
+const FilterItem = ({ filter, onSelect, selectedValue }: {
   filter: Filter,
-  onSelect: (test: Test) => void,
-  selectedValues: Test['values']
+  onSelect: (filterResult: FilterResult) => void,
+  selectedValue?: FilterValue
 }) => {
   const [isOpened, setIsOpened] = useState(false);
-  const [selectedFilterValues, setSelectedFilterValues] = useState<Test>({
-    code: filter.title.toLowerCase(),
-    values: selectedValues
-  });
 
-  const handleItemSelect = (values: Array<string>) => {
-    setSelectedFilterValues(prevState => ({ code: prevState.code, values }));
+  const handleItemSelect = (value: FilterValue) => {
+    onSelect({ code: filter.code.toLowerCase(), type: filter.type, value });
   };
 
   const renderFilterComponent = () => {
     switch (filter.type) {
-      case 'TAG':
-        return <FilterItemTag options={filter.options} selectedTags={selectedFilterValues.values}
-                              onSelect={handleItemSelect} />;
-      case 'STATUS':
-        return <FilterItemCheckbox options={filter.options} selectedStatuses={selectedFilterValues.values}
+      case 'COLOR': {
+        const typedValue = selectedValue as string[];
+        return <FilterItemColor options={filter.options} selectedColors={typedValue}
+                                onSelect={handleItemSelect} />;
+      }
+      case 'CHECKBOX': {
+        const typedValue = selectedValue as string[];
+        return <FilterItemCheckbox options={filter.options} selectedCheckboxes={typedValue}
                                    onSelect={handleItemSelect} />;
-      case 'NUMBER':
-        return <FilterItemNumber selectedValue={selectedFilterValues.values} onChange={handleItemSelect} />;
-      case 'STRING':
-        return <FilterItemString selectedValue={selectedFilterValues.values} onChange={handleItemSelect} />;
-      default:
-        return null;
+      }
+      default: {
+        const typedValue = selectedValue as string;
+        return <FilterItemString selectedValue={typedValue} onChange={handleItemSelect} />;
+      }
     }
   };
-
-  useEffect(() => {
-    onSelect(selectedFilterValues);
-  }, [selectedFilterValues]);
 
   return (
     <>
@@ -191,31 +220,31 @@ const FilterItem = ({ filter, onSelect, selectedValues }: {
             color: '#111727'
           }}>{filter.title}</Typography>
         </Box>
-        {selectedFilterValues.values.length !== 0 && <Typography sx={{
+        {selectedValue && selectedValue.length > 0 && <Typography sx={{
           padding: '4px 8px',
           background: '#F1F2F4',
           borderRadius: '4px',
           fontSize: '12px',
           lineHeight: '16px',
           color: '#8E93A8'
-        }}>+{selectedFilterValues.values.length}</Typography>}
+        }}>+{selectedValue.length}</Typography>}
       </Box>
       {isOpened && renderFilterComponent()}
     </>
   );
 };
 
-export const FilterItemTag = ({ options = [], selectedTags = [], onSelect }: {
-  options: Array<string>,
-  selectedTags: Array<string>,
-  onSelect: (selectedTags: Array<string>) => void
+export const FilterItemColor = ({ options = [], selectedColors = [], onSelect }: {
+  options: FilterOption[],
+  selectedColors: string[],
+  onSelect: (selectedTags: string[]) => void
 }) => {
   const handleItemSelect = (tag: string) => {
-    if (selectedTags.includes(tag)) {
-      const filteredTags = selectedTags.filter(it => it !== tag);
+    if (selectedColors.includes(tag)) {
+      const filteredTags = selectedColors.filter(it => it !== tag);
       onSelect(filteredTags);
     } else {
-      onSelect([...selectedTags, tag]);
+      onSelect([...selectedColors, tag]);
     }
   };
 
@@ -226,15 +255,15 @@ export const FilterItemTag = ({ options = [], selectedTags = [], onSelect }: {
       alignItems: 'center',
       gap: '16px'
     }}>
-      {options.map(tag => (
+      {options.map(option => (
         <Box
-          key={tag}
-          onClick={() => handleItemSelect(tag)}
+          key={option.title}
+          onClick={() => handleItemSelect(option.value)}
           sx={{
             width: '10px',
             height: '10px',
             padding: '5px',
-            background: tag,
+            background: option.value,
             border: '3px solid #FFFFFF',
             borderRadius: '100%',
             boxShadow: '0 0 0 1px #8E93A8',
@@ -248,17 +277,17 @@ export const FilterItemTag = ({ options = [], selectedTags = [], onSelect }: {
   );
 };
 
-export const FilterItemCheckbox = ({ options = [], selectedStatuses = [], onSelect }: {
-  options: Array<string>,
-  selectedStatuses: Array<string>,
-  onSelect: (selectedStatuses: Array<string>) => void
+export const FilterItemCheckbox = ({ options = [], selectedCheckboxes = [], onSelect }: {
+  options: FilterOption[],
+  selectedCheckboxes: string[],
+  onSelect: (selectedStatuses: string[]) => void
 }) => {
   const handleItemSelect = (status: string) => {
-    if (selectedStatuses.includes(status)) {
-      const filteredStatuses = selectedStatuses.filter(it => it !== status);
+    if (selectedCheckboxes.includes(status)) {
+      const filteredStatuses = selectedCheckboxes.filter(it => it !== status);
       onSelect(filteredStatuses);
     } else {
-      onSelect([...selectedStatuses, status]);
+      onSelect([...selectedCheckboxes, status]);
     }
   };
 
@@ -267,8 +296,8 @@ export const FilterItemCheckbox = ({ options = [], selectedStatuses = [], onSele
       display: 'flex',
       flexDirection: 'column'
     }}>
-      {options.map(status => (
-        <Box key={status} onClick={() => handleItemSelect(status)} sx={{
+      {options.map(option => (
+        <Box key={option.title} onClick={() => handleItemSelect(option.value)} sx={{
           padding: '14px 24px',
           display: 'flex',
           alignItems: 'center',
@@ -278,45 +307,15 @@ export const FilterItemCheckbox = ({ options = [], selectedStatuses = [], onSele
             background: '#F8F9FA'
           }
         }}>
-          <Checkbox checked={selectedStatuses.includes(status)} />
+          <Checkbox checked={selectedCheckboxes.includes(option.value)} />
           <Typography sx={{
             fontSize: '12px',
             lineHeight: '20px',
             letterSpacing: '.4%',
             color: '#111727'
-          }}>{status}</Typography>
+          }}>{option.title}</Typography>
         </Box>
       ))}
-    </Container>
-  );
-};
-
-export const FilterItemNumber = ({ selectedValue, onChange }: {
-  selectedValue: any,
-  onChange: (test: any) => void
-}) => {
-  const [selectedType, setSelectedType] = useState(selectedValue[0]?.code || 'GREATER_THAN');
-  const [value, setValue] = useState(selectedValue[0]?.values[0] || '');
-
-  useEffect(() => {
-    onChange([{ code: selectedType, values: [value] }]);
-  }, [value, selectedType]);
-
-  return (
-    <Container sx={{ padding: '8px 14px' }}>
-      <Select value={selectedType} onChange={event => setSelectedType(event.target.value)}>
-        <MenuItem value="GREATER_THAN">Greater Than</MenuItem>
-        <MenuItem value="LESS_THAN">Less Than</MenuItem>
-        <MenuItem value="CONTAINS">Contains</MenuItem>
-      </Select>
-      <Box sx={{ paddingTop: '10px' }}>
-        <TextField
-          type="number"
-          placeholder="Enter value"
-          value={value}
-          onChange={event => setValue(event.target.value)}
-        />
-      </Box>
     </Container>
   );
 };
@@ -325,14 +324,8 @@ export const FilterItemString = ({ selectedValue, onChange }: {
   selectedValue: string,
   onChange: (value: string) => void
 }) => {
-  const [value, setValue] = useState(selectedValue || '');
-
-  useEffect(() => {
-    onChange([value]);
-  }, [value]);
-
   return (
-    <Box sx={{ padding: '8px 14px' }}><TextField placeholder="Enter value" value={value}
-                                                 onChange={(e) => setValue(e.target.value)} /></Box>
+    <Box sx={{ padding: '8px 14px' }}><TextField placeholder="Enter value" value={selectedValue}
+                                                 onChange={(e) => onChange(e.target.value)} /></Box>
   );
 };

@@ -5,7 +5,7 @@ export const contentApi = createApi({
   reducerPath: 'contentApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:4200/api/' }),
   endpoints: build => ({
-    getContents: build.query<Array<Content>, void>({
+    getContents: build.query<Content[], void>({
       query: () => 'contents'
     })
   })

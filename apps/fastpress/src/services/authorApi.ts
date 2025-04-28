@@ -5,7 +5,7 @@ export const authorApi = createApi({
   reducerPath: 'authorApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:4200/api/' }),
   endpoints: build => ({
-    getAuthors: build.query<Array<Author>, void>({
+    getAuthors: build.query<Author[], void>({
       query: () => 'authors'
     })
   })

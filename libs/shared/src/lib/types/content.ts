@@ -17,19 +17,19 @@ export interface Article {
   status: string;
   title: string;
   trending: boolean;
-  type: string;
+  type: ContentType;
 }
 
 export interface Details {
-  slides: Array<Slide>;
+  slides: Slide[];
   type: ContentType;
 }
 
 export interface Slide {
   title: string;
-  description: Array<SlideDescription>;
-  answerExplanation: Array<SlideExplanation>;
-  answers: Array<SlideAnswer>;
+  description: SlideDescription[];
+  answerExplanation: SlideExplanation[];
+  answers: SlideAnswer[];
 }
 
 export interface SlideDescription {
@@ -47,3 +47,7 @@ export interface SlideAnswer {
 }
 
 export type ContentType = 'ARTICLE' | 'GALLERY' | 'QUIZ' | 'QUIZ_PERSONALITY'
+export const contentTypes: ContentType[] = ['ARTICLE', 'GALLERY', 'QUIZ', 'QUIZ_PERSONALITY']
+
+export type ContentStatus = 'ACTIVE' | 'DRAFT' | 'PENDING'
+export const contentStatuses: ContentStatus[] = ['ACTIVE', 'DRAFT', 'PENDING']

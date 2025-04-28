@@ -1,6 +1,6 @@
 import {Box} from "@mui/material";
 
-export const CustomImage = ({path, width, height}: { path: string, width?: string, height?: string }) => {
+export const Image = ({path, width, height}: { path: string, width?: string, height?: string }) => {
   return (
     <Box sx={{
       width: width ? width : '100%',

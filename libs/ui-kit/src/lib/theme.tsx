@@ -30,6 +30,7 @@ export const theme = createTheme({
           lineHeight: '20px',
           borderRadius: '8px',
           textTransform: 'unset',
+          whiteSpace: 'nowrap',
           ':hover': {
             boxShadow: 'none'
           }
