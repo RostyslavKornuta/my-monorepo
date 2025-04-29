@@ -10,6 +10,7 @@ import {
   formatTimestamp,
 } from '@my-monorepo/shared';
 import { Filter, Image, toFilterOption } from '@my-monorepo/ui-kit';
+import { NavLink } from 'react-router-dom';
 
 export const contentTableConfig = (additional?: any) => {
   return {

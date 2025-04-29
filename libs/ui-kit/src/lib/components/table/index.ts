@@ -1,3 +1,3 @@
 export { default as CustomTable } from './table-container';
-export * from './cell-text';
-export * from './cell-image';
+export * from './cells/cell-text';
+export * from './cells/cell-image';
