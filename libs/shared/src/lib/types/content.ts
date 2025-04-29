@@ -46,8 +46,21 @@ export interface SlideAnswer {
   score: number;
 }
 
-export type ContentType = 'ARTICLE' | 'GALLERY' | 'QUIZ' | 'QUIZ_PERSONALITY'
-export const contentTypes: ContentType[] = ['ARTICLE', 'GALLERY', 'QUIZ', 'QUIZ_PERSONALITY']
-
-export type ContentStatus = 'ACTIVE' | 'DRAFT' | 'PENDING'
-export const contentStatuses: ContentStatus[] = ['ACTIVE', 'DRAFT', 'PENDING']
+// enum
+export enum ContentType {
+  'ARTICLE',
+  'GALLERY',
+  'QUIZ',
+  'QUIZ_PERSONALITY',
+}
+export const contentTypes = Object.keys(ContentType).filter((k) =>
+  isNaN(Number(k))
+);
+export enum ContentStatus {
+  'ACTIVE',
+  'DRAFT',
+  'PENDING',
+}
+export const contentStatuses = Object.keys(ContentStatus).filter((k) =>
+  isNaN(Number(k))
+);

@@ -1,28 +1,34 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { Image } from '../image';
-import { useEffect, useState } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
+import { Image } from '@my-monorepo/ui-kit';
+import { TableColumn, TableConfig } from '../types';
 
-export interface TableColumn<T> {
-  label: string;
-  key: string;
-  render?: (value: any, row: T) => React.ReactNode;
-}
-
-export interface TableConfig<T> {
-  columns: TableColumn<T>[];
-}
-
-export const CustomTable = <T, >({ config, data, isLoading, loaderIcon, error }: {
-  config: TableConfig<T>,
-  data: T[],
-  isLoading: boolean,
-  loaderIcon: string,
-  error: any,
+const CustomTable = <T,>({
+  config,
+  data,
+  isLoading,
+  loaderIcon,
+  error,
+}: {
+  config: TableConfig<T>;
+  data: T[];
+  isLoading: boolean;
+  loaderIcon: string;
+  error: any;
 }) => {
   return (
     <>
       {isLoading && <Image width="115px" height="32px" path={loaderIcon} />}
-      {!isLoading && error && <Typography>Oops, something went wrong :(</Typography>}
+      {!isLoading && error && (
+        <Typography>Oops, something went wrong :(</Typography>
+      )}
       {!isLoading && !error && (
         <>
           {data.length === 0 ? (
@@ -43,11 +49,15 @@ export const CustomTable = <T, >({ config, data, isLoading, loaderIcon, error }:
                 <TableBody>
                   {data.map((entity: T, rowIndex: number) => (
                     <TableRow key={rowIndex} role={'row'}>
-                      {config.columns.map((column: TableColumn<T>, rowIndex: number) => (
-                        <TableCell key={rowIndex} size="small" role={'row'}>
-                          {column.render ? column.render(entity[column.key], entity) : entity[column.key]}
-                        </TableCell>
-                      ))}
+                      {config.columns.map(
+                        (column: TableColumn<T>, rowIndex: number) => (
+                          <TableCell key={rowIndex} size="small" role={'row'}>
+                            {column.render
+                              ? column.render(entity[column.key], entity)
+                              : entity[column.key]}
+                          </TableCell>
+                        )
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -60,3 +70,4 @@ export const CustomTable = <T, >({ config, data, isLoading, loaderIcon, error }:
   );
 };
 
+export default CustomTable;

@@ -4,14 +4,22 @@ import { TextField } from '@mui/material';
 import { useDebounce } from '@my-monorepo/shared';
 import { useEffect, useState } from 'react';
 
-export const Search = ({ value, onChange, debounceDelay = 500, width = '400px' }: {
+const Search = ({
+  value,
+  onChange,
+  debounceDelay = 500,
+  width = '400px',
+}: {
   value: string;
   onChange: (newValue: string) => void;
   debounceDelay?: number;
   width?: string;
 }) => {
   const [inputValue, setInputValue] = useState(value);
-  const debouncedValue = useDebounce({ value: inputValue, delay: debounceDelay });
+  const debouncedValue = useDebounce({
+    value: inputValue,
+    delay: debounceDelay,
+  });
 
   useEffect(() => {
     onChange(debouncedValue);
@@ -32,8 +40,10 @@ export const Search = ({ value, onChange, debounceDelay = 500, width = '400px' }
           <InputAdornment position="start">
             <SearchIcon sx={{ color: '#8E93A8', height: 20, width: 20 }} />
           </InputAdornment>
-        )
+        ),
       }}
     />
   );
 };
+
+export default Search;
