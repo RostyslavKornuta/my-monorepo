@@ -1,11 +1,18 @@
 import { Box, Container, MenuItem, Select, Typography } from '@mui/material';
-import { NavLink } from 'react-router-dom';
-import { CustomImage, TableConfig } from '@my-monorepo/ui-kit';
-import { Category, formatTimestamp } from '@my-monorepo/shared';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import {
+  Author,
+  capitalize,
+  Category,
+  contentStatuses,
+  contentTypes,
+  formatTimestamp,
+} from '@my-monorepo/shared';
+import { Filter, Image, toFilterOption } from '@my-monorepo/ui-kit';
+import { NavLink } from 'react-router-dom';
 
-export const config = (additional?: any): TableConfig<any> => {
+export const contentTableConfig = (additional?: any) => {
   return {
     columns: [
       {
@@ -20,11 +27,13 @@ export const config = (additional?: any): TableConfig<any> => {
                 height: '40px',
                 border: '1px solid #CBCEDA',
                 borderRadius: '8px',
-                background: !row.favoriteImage ? '#E7E8EC' : undefined
+                background: !row.favoriteImage ? '#E7E8EC' : undefined,
               }}
             >
               {row.favoriteImage && (
-                <CustomImage path={`https://fastpress.prezna.com/api/images/${row.favoriteImage}`} />
+                <Image
+                  path={`https://fastpress.prezna.com/api/images/${row.favoriteImage}`}
+                />
               )}
               <Box
                 sx={{
@@ -39,7 +48,7 @@ export const config = (additional?: any): TableConfig<any> => {
                   background: '#171F33',
                   borderTopRightRadius: '6px',
                   borderBottomLeftRadius: '7px',
-                  color: '#FFFFFF'
+                  color: '#FFFFFF',
                 }}
               >
                 {row.slides?.length || 1}
@@ -52,13 +61,13 @@ export const config = (additional?: any): TableConfig<any> => {
                 lineHeight: '16px',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
               }}
             >
               {value}
             </Typography>
           </Container>
-        )
+        ),
       },
       {
         label: 'Status',
@@ -76,42 +85,49 @@ export const config = (additional?: any): TableConfig<any> => {
               boxShadow: '0 0 0 1px #8E93A8',
               '&.ACTIVE': {
                 background: '#6FB295',
-                boxShadow: '0 0 0 1px #8CC1AA'
+                boxShadow: '0 0 0 1px #8CC1AA',
               },
               '&.PENDING': {
                 background: '#E59B20',
-                boxShadow: '0 0 0 1px #EDEEF0'
-              }
+                boxShadow: '0 0 0 1px #EDEEF0',
+              },
             }}
           />
-        )
+        ),
       },
       {
         label: 'Trending',
         key: 'trending',
-        render: (value) => (value ? 'Yes' : 'No')
+        render: (value) => (value ? 'Yes' : 'No'),
       },
       {
         label: 'Type',
         key: 'type',
-        render: (value) => (value ? value.charAt(0) + value.slice(1).toLowerCase() : '')
+        render: (value) =>
+          value ? value.charAt(0) + value.slice(1).toLowerCase() : '',
       },
       {
         label: 'Author',
         key: 'author',
-        render: (value) => value
+        render: (value) => value,
       },
       {
         label: 'Category',
         key: 'category',
-        render: (value) => <Select value={value}>
-          {additional.categories.map((category: Category) => <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>)}
-        </Select>
+        render: (value) => (
+          <Select value={value}>
+            {additional?.categories?.map((category: Category) => (
+              <MenuItem value={category.id} key={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
+        ),
       },
       {
         label: 'Date',
         key: 'date',
-        render: (value) => formatTimestamp(value)
+        render: (value) => formatTimestamp(value),
       },
       {
         label: 'Action',
@@ -124,7 +140,7 @@ export const config = (additional?: any): TableConfig<any> => {
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
-                '&:hover': { backgroundColor: '#E7E8EC' }
+                '&:hover': { backgroundColor: '#E7E8EC' },
               }}
               component={NavLink}
               to={row.path}
@@ -137,15 +153,52 @@ export const config = (additional?: any): TableConfig<any> => {
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
-                '&:hover': { backgroundColor: '#E7E8EC' }
+                '&:hover': { backgroundColor: '#E7E8EC' },
               }}
               component={NavLink}
             >
-              <KeyboardArrowRightIcon sx={{ color: '#8E93A8', height: 20, width: 20 }} />
+              <KeyboardArrowRightIcon
+                sx={{ color: '#8E93A8', height: 20, width: 20 }}
+              />
             </Box>
           </Container>
-        )
-      }
-    ]
+        ),
+      },
+    ],
   };
 };
+
+export const contentFiltersConfig = (additional?: any): Filter[] => [
+  {
+    title: 'Statuses',
+    code: 'STATUS',
+    type: 'CHECKBOX',
+    options: contentStatuses.map((type) =>
+      toFilterOption(capitalize(type), type.toLowerCase())
+    ),
+  },
+  {
+    title: 'Authors',
+    code: 'AUTHOR',
+    type: 'CHECKBOX',
+    options: additional?.authors?.map((author: Author) =>
+      toFilterOption(author.name, author.name)
+    ),
+  },
+  {
+    title: 'Categories',
+    code: 'CATEGORY',
+    type: 'CHECKBOX',
+    options: additional?.categories?.map((category: Category) =>
+      toFilterOption(category.name, category.id)
+    ),
+  },
+  {
+    title: 'Types',
+    code: 'TYPE',
+    type: 'CHECKBOX',
+    options: contentTypes.map((type) =>
+      toFilterOption(capitalize(type), type.toLowerCase())
+    ),
+  },
+];

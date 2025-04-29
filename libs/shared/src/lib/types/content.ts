@@ -17,19 +17,19 @@ export interface Article {
   status: string;
   title: string;
   trending: boolean;
-  type: string;
+  type: ContentType;
 }
 
 export interface Details {
-  elements: Array<Slide>;
+  slides: Slide[];
   type: ContentType;
 }
 
 export interface Slide {
   title: string;
-  description: Array<SlideDescription>;
-  answerExplanation: Array<SlideExplanation>;
-  answers: Array<SlideAnswer>;
+  description: SlideDescription[];
+  answerExplanation: SlideExplanation[];
+  answers: SlideAnswer[];
 }
 
 export interface SlideDescription {
@@ -46,4 +46,21 @@ export interface SlideAnswer {
   score: number;
 }
 
-export type ContentType = 'ARTICLE' | 'GALLERY' | 'QUIZ' | 'QUIZ_PERSONALITY'
+// enum
+export enum ContentType {
+  'ARTICLE',
+  'GALLERY',
+  'QUIZ',
+  'QUIZ_PERSONALITY',
+}
+export const contentTypes = Object.keys(ContentType).filter((k) =>
+  isNaN(Number(k))
+);
+export enum ContentStatus {
+  'ACTIVE',
+  'DRAFT',
+  'PENDING',
+}
+export const contentStatuses = Object.keys(ContentStatus).filter((k) =>
+  isNaN(Number(k))
+);

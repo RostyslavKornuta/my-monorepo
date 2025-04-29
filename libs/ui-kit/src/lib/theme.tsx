@@ -30,6 +30,7 @@ export const theme = createTheme({
           lineHeight: '20px',
           borderRadius: '8px',
           textTransform: 'unset',
+          whiteSpace: 'nowrap',
           ':hover': {
             boxShadow: 'none'
           }
@@ -209,34 +210,17 @@ export const theme = createTheme({
         }
       ]
     },
-    MuiInput: {
+    MuiTextField: {
       styleOverrides: {
-        // root: {
-        //   width: '400px',
-        //   height: 'unset',
-        //   padding: '13px 10px',
-        //   border: '1px solid #E7E8EC',
-        //   borderRadius: '8px',
-        //   fontSize: '14px',
-        //   fontWeight: '400',
-        //   lineHeight: '20px',
-        //   color: '#171F33',
-        //   letterSpacing: '0'
-        // },
-        // input: {
-        //   height: 'unset',
-        //   padding: '0',
-        //   fontSize: '14px',
-        //   fontWeight: '400',
-        //   lineHeight: '20px',
-        //   color: '#171F33'
-        // }
+        root: {
+          width: '100%'
+        }
       }
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          width: 400,
+          width: '100%',
           padding: '0 0 0 10px',
         },
         input: {
@@ -268,14 +252,6 @@ export const theme = createTheme({
               background: '#F8F9FA'
             },
           },
-        },
-        input: {
-          // fontSize: 14,
-          // lineHeight: 20,
-          // color: '#171F33',
-          // ':focus': {
-          //   boxShadow: '0px 0px 0px 2px #D4E5D8'
-          // }
         }
       }
     },
@@ -358,7 +334,22 @@ export const theme = createTheme({
       styleOverrides: {
         select: {
           height: '16px',
-          minHeight: 'unset'
+          minHeight: 'unset',
+          margin: 0,
+          padding: '14px 10px 14px 0',
+          fontSize: '14px',
+          lineHeight: '20px',
+        }
+      }
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          padding: '0',
+          color: '#8E93A8',
+          '&.Mui-checked': {
+            color: '#6FB295'
+          },
         }
       }
     }
