@@ -17,6 +17,7 @@ const ContentHeader = ({
       }}
     >
       <Typography
+        component="h1"
         sx={{
           fontSize: '24px',
           fontWeight: 700,

@@ -89,7 +89,7 @@ export const contentTableConfig = (additional?: any) => {
               },
               '&.PENDING': {
                 background: '#E59B20',
-                boxShadow: '0 0 0 1px #EDEEF0',
+                boxShadow: '0 0 0 1px #E59B20',
               },
             }}
           />
@@ -170,7 +170,7 @@ export const contentTableConfig = (additional?: any) => {
 
 export const contentFiltersConfig = (additional?: any): Filter[] => [
   {
-    title: 'Statuses',
+    title: 'Status',
     code: 'STATUS',
     type: 'CHECKBOX',
     options: contentStatuses.map((type) =>
