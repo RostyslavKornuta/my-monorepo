@@ -33,6 +33,7 @@ const Header = ({
           <Box
             component="img"
             src={logo}
+            alt="logo"
             sx={{
               width: '103px',
               height: '36px',
@@ -72,6 +73,7 @@ const Header = ({
       <Box
         component="img"
         src="public/header_bg.svg"
+        alt="header background"
         sx={{
           position: 'absolute',
           top: 0,
